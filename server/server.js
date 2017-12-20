@@ -26,15 +26,13 @@ io.on('connection', (socket) => {
       if(!isRealString(joinDetails.name) || !isRealString(joinDetails.room) ){
         return callback('Name and room are required fields');
       }
-      var user = users.addUser(socket.id, joinDetails.name, joinDetails.room);
-      if(user) {
-        socket.join(user.room);
-        socket.broadcast.to(user.room).emit('newMessage',generateMessage('Admin',`${user.name} joined`));
-        io.to(user.room).emit('newUserList',users.getUserList(user.room));
-        callback();
-      }else {
-        callback('Unable to join the room');
-      }
+      socket.join(joinDetails.room);
+      debugger;
+      users.removeUser(socket.id);
+      users.addUser(socket.id, joinDetails.name, joinDetails.room);
+      socket.broadcast.to(joinDetails.room).emit('newMessage',generateMessage('Admin',`${joinDetails.name} joined`));
+      io.to(joinDetails.room).emit('newUserList',users.getUserList(joinDetails.room));
+      callback();
 
   });
 
