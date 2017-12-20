@@ -5,7 +5,8 @@ socket.on ('connect', function () {
   var joinDetails  = jQuery.deparam(window.location.search);
   socket.emit('joinRoom', joinDetails, function (error) {
     if(error){
-      return alert(error);
+      console.log(error);
+      window.location.href = '/';
     }
     console.log('Joined the room');
   })
@@ -69,11 +70,15 @@ jQuery('#message_form').on('submit', function(event) {
 jQuery('#send_button').on('click', function(event) {
   console.log('in send button click');
   var messageTextbox = jQuery('[name=message]');
-  socket.emit('createMessage', {
-    text: messageTextbox.val()
-  }, function () {
-    messageTextbox.val('');
-  });
+  var messageText = messageTextbox.val();
+  if(messageText && messageText.trim().length > 0){
+    socket.emit('createMessage', {
+      text: messageText
+    }, function () {
+      messageTextbox.val('');
+    });
+  }
+  
 });
 
 var locationButton = jQuery('#sendLocation_button');
